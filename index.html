@@ -3,209 +3,241 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oxford Flyers - Continuous Assessment</title>
+    <title>Oxford Flyers - A2 Speaking Assessment</title>
     <style>
         :root {
             --oxford-blue: #002147;
             --oxford-gold: #F39200;
-            --soft-bg: #f4f7f9;
+            --soft-bg: #f8fafc;
             --success: #10b981;
+            --danger: #ef4444;
+            --text-dark: #1e293b;
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--soft-bg);
-            margin: 0;
+            color: var(--text-dark);
             padding: 20px;
             display: flex;
             justify-content: center;
         }
 
-        .container {
-            max-width: 700px;
-            width: 100%;
-        }
+        .container { max-width: 850px; width: 100%; }
 
+        /* Main Assessment Card */
         .card {
             background: white;
             padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border-radius: 24px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.08);
             text-align: center;
-            border-top: 8px solid var(--oxford-blue);
+            border-top: 10px solid var(--oxford-blue);
         }
 
-        .header-logo {
-            font-weight: bold;
-            color: var(--oxford-blue);
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
+        .header {
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+
+        .header h1 { color: var(--oxford-blue); font-size: 1.4rem; letter-spacing: 1px; }
 
         .student-inputs {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             margin-bottom: 30px;
         }
 
-        input {
+        input, textarea {
             flex: 1;
-            padding: 12px;
+            padding: 14px;
             border: 2px solid #e2e8f0;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 1rem;
+            outline: none;
+            transition: border 0.3s;
         }
 
-        .question-display {
-            background: #fffcf0;
-            border: 2px solid var(--oxford-gold);
-            padding: 30px;
-            border-radius: 15px;
+        input:focus { border-color: var(--oxford-gold); }
+
+        .question-area {
+            background: #f0f9ff;
+            border: 2px solid var(--oxford-blue);
+            padding: 40px 20px;
+            border-radius: 20px;
             margin: 20px 0;
-            min-height: 120px;
+            min-height: 180px;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
 
-        #qNumber {
-            color: var(--oxford-gold);
-            font-weight: bold;
-            margin-bottom: 10px;
+        #qNum { color: var(--oxford-gold); font-weight: bold; font-size: 0.85rem; text-transform: uppercase; margin-bottom: 10px; }
+        #qText { font-size: 1.6rem; font-weight: 600; color: var(--oxford-blue); line-height: 1.4; }
+
+        .recording-ui { margin: 20px 0; display: none; }
+        .recording .recording-ui { display: block; }
+
+        .timer {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--danger);
+            font-family: monospace;
+            animation: pulse 1.5s infinite;
         }
 
-        #qText {
-            font-size: 1.4rem;
-            color: var(--oxford-blue);
-            line-height: 1.4;
-        }
-
-        .timer-box {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #ef4444;
-            margin: 20px 0;
-            display: none;
-        }
-
-        .recording .timer-box { display: block; animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0.5; } }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
         button {
-            padding: 15px 30px;
-            border-radius: 12px;
+            padding: 16px 32px;
+            border-radius: 14px;
             border: none;
-            font-weight: bold;
+            font-weight: 700;
             font-size: 1.1rem;
             cursor: pointer;
             transition: 0.3s;
             width: 100%;
-            margin-bottom: 10px;
         }
 
-        .btn-start { background: var(--oxford-blue); color: white; }
-        .btn-next { background: var(--oxford-gold); color: white; display: none; }
-        .btn-finish { background: #1e293b; color: white; display: none; }
-        
-        button:disabled { background: #cbd5e1; cursor: not-allowed; }
+        .btn-primary { background: var(--oxford-blue); color: white; }
+        .btn-gold { background: var(--oxford-gold); color: white; display: none; }
+        .btn-dark { background: #334155; color: white; display: none; }
 
         /* Report Styles */
         #reportArea {
             display: none;
             background: white;
-            padding: 40px;
-            border-radius: 20px;
+            padding: 50px;
+            border-radius: 24px;
+            border: 1px solid #e2e8f0;
             text-align: left;
-            border: 2px solid var(--oxford-blue);
         }
 
-        .A2-badge {
-            background: var(--success);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            float: right;
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid var(--oxford-blue);
+            padding-bottom: 10px;
         }
 
-        .score-row { margin: 15px 0; }
-        .progress-bg { background: #eee; height: 10px; border-radius: 5px; margin-top: 5px; }
-        .progress-fill { background: var(--oxford-blue); height: 100%; border-radius: 5px; transition: 1s; }
+        .A2-badge { background: var(--success); color: white; padding: 6px 16px; border-radius: 50px; font-weight: bold; font-size: 0.9rem; }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin: 20px 0; }
+        .score-box { background: #f8fafc; padding: 20px; border-radius: 16px; border-left: 6px solid var(--oxford-gold); }
+        .stars { color: var(--oxford-gold); margin-bottom: 8px; }
+
+        .feedback-box {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            padding: 25px;
+            border-radius: 16px;
+            margin-top: 25px;
+        }
+
+        .checklist { list-style: none; margin-top: 15px; }
+        .checklist li { margin-bottom: 10px; font-size: 0.95rem; display: flex; align-items: center; }
+        .checklist li::before { content: "✓"; color: var(--success); font-weight: 900; margin-right: 10px; }
 
         @media print {
             .no-print { display: none; }
             body { background: white; padding: 0; }
-            #reportArea { display: block !important; border: none; }
+            #reportArea { display: block !important; box-shadow: none; width: 100%; }
+            textarea { border: none; background: transparent; padding: 0; font-style: italic; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="card no-print" id="setupUI">
-        <div class="header-logo">OXFORD FLYERS (A2) ORAL TEST</div>
-        
+    <div class="card no-print" id="assessmentUI">
+        <div class="header">
+            <h1>OXFORD FLYERS SPEAKING</h1>
+            <span class="A2-badge">A2 CEFR</span>
+        </div>
+
         <div class="student-inputs">
-            <input type="text" id="sName" placeholder="Full Name">
-            <input type="text" id="sClass" placeholder="Class">
+            <input type="text" id="nameInput" placeholder="Student's Full Name">
+            <input type="text" id="classInput" placeholder="Class / Grade">
         </div>
 
-        <div class="question-display" id="qDisplay">
-            <p id="qText">Press "Start Assessment" when you are ready to speak.</p>
+        <div class="question-area" id="qDisplay">
+            <p id="qText">Welcome! Click below to start your recorded interview.</p>
         </div>
 
-        <div class="timer-box" id="timer">00:00</div>
+        <div class="recording-ui">
+            <div class="timer" id="timer">00:00</div>
+            <p style="color: var(--danger); font-weight: bold;">● RECORDING IN PROGRESS</p>
+        </div>
 
-        <button id="startBtn" class="btn-start" onclick="initTest()">🎙️ Start Assessment</button>
-        <button id="nextBtn" class="btn-next" onclick="nextQuestion()">Next Question ➡️</button>
-        <button id="finishBtn" class="btn-finish" onclick="stopAndFinish()">🏁 Finish & Stop Recording</button>
+        <button id="btnStart" class="btn-primary" onclick="startTest()">🎙️ Start Continuous Recording</button>
+        <button id="btnNext" class="btn-gold" onclick="nextStep()">Next Topic ➡️</button>
+        <button id="btnFinish" class="btn-dark" onclick="finishTest()">🏁 End & Generate Report</button>
     </div>
 
     <div id="reportArea">
-        <div class="A2-badge">CEFR LEVEL: A2 (Flyers)</div>
-        <h2 style="color: var(--oxford-blue); margin-top: 0;">Speaking Evaluation Report</h2>
-        <hr>
-        <p><strong>Candidate:</strong> <span id="repName"></span></p>
-        <p><strong>Date:</strong> <span id="repDate"></span></p>
-        
-        <div class="score-row">
-            <strong>Vocabulary & Grammar (A2.1)</strong>
-            <div class="progress-bg"><div class="progress-fill" style="width: 85%;"></div></div>
-            <small>Uses high-frequency words and basic sentence structures correctly.</small>
+        <div class="report-header">
+            <h2 style="color: var(--oxford-blue);">Speaking Achievement Report</h2>
+            <span class="A2-badge">Oxford Standard: A2</span>
         </div>
 
-        <div class="score-row">
-            <strong>Pronunciation & Fluency</strong>
-            <div class="progress-bg"><div class="progress-fill" style="width: 70%;"></div></div>
-            <small>Clear enough to be understood; may have some hesitation.</small>
+        <div style="margin-bottom: 30px;">
+            <p><strong>Student:</strong> <span id="repName"></span></p>
+            <p><strong>Grade:</strong> <span id="repClass"></span></p>
+            <p><strong>Assessment Date:</strong> <span id="repDate"></span></p>
         </div>
 
-        <div style="background: #f8fafc; padding: 15px; border-radius: 10px; margin: 20px 0;">
-            <strong>A2 Descriptors Met:</strong>
-            <ul style="font-size: 0.9rem; padding-left: 20px; color: #475569;">
-                <li>Can describe family and living conditions.</li>
-                <li>Can discuss daily routines and simple hobbies.</li>
-                <li>Can answer questions about school and friends.</li>
+        <div class="grid">
+            <div class="score-box">
+                <div class="stars">⭐⭐⭐⭐⭐</div>
+                <strong>Lexical Resource</strong>
+                <p style="font-size: 0.85rem; color: #64748b; margin-top: 5px;">Uses A2 topics: Home, Family, School, and Routine vocabulary.</p>
+            </div>
+            <div class="score-box">
+                <div class="stars">⭐⭐⭐⭐⭐</div>
+                <strong>Interaction & Pronunciation</strong>
+                <p style="font-size: 0.85rem; color: #64748b; margin-top: 5px;">Ability to respond and clarity of speech sounds.</p>
+            </div>
+        </div>
+
+        <div class="feedback-box">
+            <h3 style="color: #92400e;">💡 Improvement Feedback (A2 Goals)</h3>
+            <ul class="checklist">
+                <li><strong>Answer "Why":</strong> Try to explain your reasons (e.g., "I like it because...").</li>
+                <li><strong>Time Phrases:</strong> Use words like "First", "Then", "In the morning".</li>
+                <li><strong>Grammar Range:</strong> Practice using "usually" for routines and "going to" for plans.</li>
             </ul>
+            <textarea id="teacherNotes" placeholder="Teacher: Add personalized feedback here..." style="width: 100%; margin-top: 20px; height: 100px;"></textarea>
         </div>
 
-        <audio id="finalAudio" controls style="width: 100%; margin: 10px 0;"></audio>
-        
-        <button class="btn-start" style="margin-top:20px;" onclick="window.print()">🖨️ Print Report to PDF</button>
-        <button class="btn-next" style="display:block; background:#64748b;" onclick="location.reload()">Start New Session</button>
+        <div style="margin-top: 30px; padding: 20px; background: #f1f5f9; border-radius: 12px;">
+            <strong>Audio Evidence:</strong>
+            <audio id="audioPlayback" controls style="width: 100%; margin-top: 10px;"></audio>
+        </div>
+
+        <div class="no-print" style="margin-top: 40px; display: flex; gap: 15px;">
+            <button class="btn-primary" style="flex: 1;" onclick="window.print()">🖨️ Print / Save PDF</button>
+            <button class="btn-dark" style="flex: 1;" onclick="location.reload()">Start New Session</button>
+        </div>
     </div>
 </div>
 
 <script>
     const questions = [
-        "What's your full name? How old are you? Where do you live?",
+        "What's your name? How old are you? Where do you live?",
+        "What is the first thing you like to do when you get out of bed?",
         "What do you like to eat for lunch?",
-        "How do you go to school every day?",
+        "How do you go to school each day?",
         "What do you like doing after school?",
-        "Who do you live with?",
-        "Who is your best friend?",
+        "Who do you live with at home?",
+        "Who is your best friend and why do you like them?",
         "What is your favorite room in your house?",
         "Do you have a pet? What is it like?",
         "What do you usually do on Saturdays?",
@@ -213,73 +245,69 @@
     ];
 
     let currentIdx = 0;
-    let mediaRecorder;
+    let recorder;
     let chunks = [];
-    let timerInt;
-    let seconds = 0;
+    let timer;
+    let time = 0;
 
-    async function initTest() {
-        const name = document.getElementById('sName').value;
-        if(!name) return alert("Please enter your name!");
+    async function startTest() {
+        const name = document.getElementById('nameInput').value;
+        if(!name) return alert("Please enter the student's name.");
 
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorder = new MediaRecorder(stream);
+            recorder = new MediaRecorder(stream);
             chunks = [];
 
-            mediaRecorder.ondataavailable = e => chunks.push(e.data);
-            mediaRecorder.onstop = () => {
+            recorder.ondataavailable = e => chunks.push(e.data);
+            recorder.onstop = () => {
                 const blob = new Blob(chunks, { type: 'audio/webm' });
-                document.getElementById('finalAudio').src = URL.createObjectURL(blob);
+                document.getElementById('audioPlayback').src = URL.createObjectURL(blob);
+                stream.getTracks().forEach(track => track.stop());
             };
 
-            mediaRecorder.start();
+            recorder.start();
             document.body.classList.add('recording');
             
-            // Start Clock
-            timerInt = setInterval(() => {
-                seconds++;
-                let m = Math.floor(seconds / 60).toString().padStart(2, '0');
-                let s = (seconds % 60).toString().padStart(2, '0');
+            timer = setInterval(() => {
+                time++;
+                let m = Math.floor(time / 60).toString().padStart(2, '0');
+                let s = (time % 60).toString().padStart(2, '0');
                 document.getElementById('timer').textContent = `${m}:${s}`;
             }, 1000);
 
-            // UI Transitions
-            document.getElementById('startBtn').style.display = 'none';
-            document.getElementById('nextBtn').style.display = 'block';
-            nextQuestion();
-
+            document.getElementById('btnStart').style.display = 'none';
+            document.getElementById('btnNext').style.display = 'block';
+            nextStep();
         } catch (err) {
-            alert("Mic error: " + err);
+            alert("Microphone access denied!");
         }
     }
 
-    function nextQuestion() {
+    function nextStep() {
         if(currentIdx < questions.length) {
-            document.getElementById('qText').innerHTML = `<span id="qNumber">Question ${currentIdx + 1} of ${questions.length}</span><br>${questions[currentIdx]}`;
+            document.getElementById('qDisplay').innerHTML = `
+                <div id="qNum">Topic ${currentIdx + 1} of ${questions.length}</div>
+                <div id="qText">${questions[currentIdx]}</div>
+            `;
             currentIdx++;
-            
             if(currentIdx === questions.length) {
-                document.getElementById('nextBtn').style.display = 'none';
-                document.getElementById('finishBtn').style.display = 'block';
+                document.getElementById('btnNext').style.display = 'none';
+                document.getElementById('btnFinish').style.display = 'block';
             }
         }
     }
 
-    function stopAndFinish() {
-        mediaRecorder.stop();
-        clearInterval(timerInt);
+    function finishTest() {
+        recorder.stop();
+        clearInterval(timer);
         
-        // Populate Report
-        document.getElementById('repName').textContent = document.getElementById('sName').value;
+        document.getElementById('repName').textContent = document.getElementById('nameInput').value;
+        document.getElementById('repClass').textContent = document.getElementById('classInput').value || "N/A";
         document.getElementById('repDate').textContent = new Date().toLocaleDateString();
         
-        // Show Report
-        document.getElementById('setupUI').style.display = 'none';
+        document.getElementById('assessmentUI').style.display = 'none';
         document.getElementById('reportArea').style.display = 'block';
-        
-        // Stop all tracks
-        mediaRecorder.stream.getTracks().forEach(t => t.stop());
     }
 </script>
 
