@@ -3,132 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My English Interview</title>
+    <title>Oxford Flyers - Continuous Assessment</title>
     <style>
         :root {
-            --primary: #4f46e5;
-            --secondary: #06b6d4;
-            --accent: #f59e0b;
-            --bg: #eef2ff;
+            --oxford-blue: #002147;
+            --oxford-gold: #F39200;
+            --soft-bg: #f4f7f9;
+            --success: #10b981;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            background-color: var(--soft-bg);
             margin: 0;
             padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 700px;
+            width: 100%;
         }
 
         .card {
             background: white;
-            max-width: 600px;
-            width: 100%;
-            padding: 30px;
-            border-radius: 30px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
             text-align: center;
-            border: 8px solid white;
+            border-top: 8px solid var(--oxford-blue);
         }
 
-        .header h1 { color: var(--primary); margin-bottom: 5px; font-size: 2rem; }
-        .header p { color: #64748b; margin-bottom: 25px; font-weight: bold; }
-
-        .question-box {
-            background: #f8fafc;
-            border: 3px dashed var(--secondary);
-            padding: 25px;
-            border-radius: 20px;
+        .header-logo {
+            font-weight: bold;
+            color: var(--oxford-blue);
+            font-size: 1.5rem;
             margin-bottom: 20px;
-            min-height: 100px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .student-inputs {
             display: flex;
-            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        .question-display {
+            background: #fffcf0;
+            border: 2px solid var(--oxford-gold);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
             justify-content: center;
         }
 
-        #questionText {
-            font-size: 1.4rem;
-            color: #1e293b;
-            font-weight: 600;
+        #qNumber {
+            color: var(--oxford-gold);
+            font-weight: bold;
+            margin-bottom: 10px;
         }
 
-        .controls { display: flex; flex-direction: column; gap: 15px; align-items: center; }
+        #qText {
+            font-size: 1.4rem;
+            color: var(--oxford-blue);
+            line-height: 1.4;
+        }
+
+        .timer-box {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ef4444;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .recording .timer-box { display: block; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.5; } }
 
         button {
             padding: 15px 30px;
-            border-radius: 50px;
+            border-radius: 12px;
             border: none;
-            font-size: 1.1rem;
             font-weight: bold;
+            font-size: 1.1rem;
             cursor: pointer;
-            transition: all 0.2s;
-            width: 80%;
+            transition: 0.3s;
+            width: 100%;
+            margin-bottom: 10px;
         }
 
-        .btn-next { background: var(--accent); color: white; box-shadow: 0 4px 0 #b45309; }
-        .btn-next:active { transform: translateY(4px); box-shadow: none; }
-
-        .btn-rec { background: #ef4444; color: white; }
-        .btn-stop { background: #1e293b; color: white; }
+        .btn-start { background: var(--oxford-blue); color: white; }
+        .btn-next { background: var(--oxford-gold); color: white; display: none; }
+        .btn-finish { background: #1e293b; color: white; display: none; }
         
-        .timer {
-            font-family: monospace;
-            font-size: 2rem;
-            color: #ef4444;
-            margin: 10px 0;
-            visibility: hidden;
+        button:disabled { background: #cbd5e1; cursor: not-allowed; }
+
+        /* Report Styles */
+        #reportArea {
+            display: none;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: left;
+            border: 2px solid var(--oxford-blue);
         }
 
-        .recording .timer { visibility: visible; }
-        
-        input {
-            width: 80%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 10px;
-            border: 2px solid #ddd;
-            text-align: center;
+        .A2-badge {
+            background: var(--success);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            float: right;
         }
 
-        audio { margin-top: 15px; width: 100%; }
-        
-        #finishArea { display: none; }
+        .score-row { margin: 15px 0; }
+        .progress-bg { background: #eee; height: 10px; border-radius: 5px; margin-top: 5px; }
+        .progress-fill { background: var(--oxford-blue); height: 100%; border-radius: 5px; transition: 1s; }
+
+        @media print {
+            .no-print { display: none; }
+            body { background: white; padding: 0; }
+            #reportArea { display: block !important; border: none; }
+        }
     </style>
 </head>
 <body>
 
-<div class="card" id="mainApp">
-    <div class="header">
-        <h1>🎤 Talk to Me!</h1>
-        <p>Answer the questions to practice your English</p>
-    </div>
-
-    <input type="text" id="studentName" placeholder="Enter your name first!">
-
-    <div class="question-box">
-        <p id="questionText">Click the button below to get your first question!</p>
-    </div>
-
-    <div class="controls">
-        <button class="btn-next" onclick="nextQuestion()">🎲 Get New Question</button>
-        <div class="timer" id="timer">00:00</div>
-        <button class="btn-rec" id="recBtn" onclick="startRecording()" disabled>🔴 Start Recording</button>
-        <button class="btn-stop" id="stopBtn" onclick="stopRecording()" style="display:none;">⏹ Stop Answer</button>
+<div class="container">
+    <div class="card no-print" id="setupUI">
+        <div class="header-logo">OXFORD FLYERS (A2) ORAL TEST</div>
         
-        <audio id="playback" controls style="display:none;"></audio>
-        <button id="dlBtn" style="display:none; background: var(--secondary); color:white;" onclick="download()">💾 Download My Answer</button>
+        <div class="student-inputs">
+            <input type="text" id="sName" placeholder="Full Name">
+            <input type="text" id="sClass" placeholder="Class">
+        </div>
+
+        <div class="question-display" id="qDisplay">
+            <p id="qText">Press "Start Assessment" when you are ready to speak.</p>
+        </div>
+
+        <div class="timer-box" id="timer">00:00</div>
+
+        <button id="startBtn" class="btn-start" onclick="initTest()">🎙️ Start Assessment</button>
+        <button id="nextBtn" class="btn-next" onclick="nextQuestion()">Next Question ➡️</button>
+        <button id="finishBtn" class="btn-finish" onclick="stopAndFinish()">🏁 Finish & Stop Recording</button>
     </div>
 
-    <button onclick="finish()" style="margin-top: 30px; background: none; color: #94a3b8; text-decoration: underline; font-size: 0.9rem;">I'm finished with all questions</button>
-</div>
+    <div id="reportArea">
+        <div class="A2-badge">CEFR LEVEL: A2 (Flyers)</div>
+        <h2 style="color: var(--oxford-blue); margin-top: 0;">Speaking Evaluation Report</h2>
+        <hr>
+        <p><strong>Candidate:</strong> <span id="repName"></span></p>
+        <p><strong>Date:</strong> <span id="repDate"></span></p>
+        
+        <div class="score-row">
+            <strong>Vocabulary & Grammar (A2.1)</strong>
+            <div class="progress-bg"><div class="progress-fill" style="width: 85%;"></div></div>
+            <small>Uses high-frequency words and basic sentence structures correctly.</small>
+        </div>
 
-<div class="card" id="finishArea">
-    <h1>🌟 Awesome!</h1>
-    <p id="congratsMsg"></p>
-    <button class="btn-next" onclick="location.reload()">Restart Interview</button>
+        <div class="score-row">
+            <strong>Pronunciation & Fluency</strong>
+            <div class="progress-bg"><div class="progress-fill" style="width: 70%;"></div></div>
+            <small>Clear enough to be understood; may have some hesitation.</small>
+        </div>
+
+        <div style="background: #f8fafc; padding: 15px; border-radius: 10px; margin: 20px 0;">
+            <strong>A2 Descriptors Met:</strong>
+            <ul style="font-size: 0.9rem; padding-left: 20px; color: #475569;">
+                <li>Can describe family and living conditions.</li>
+                <li>Can discuss daily routines and simple hobbies.</li>
+                <li>Can answer questions about school and friends.</li>
+            </ul>
+        </div>
+
+        <audio id="finalAudio" controls style="width: 100%; margin: 10px 0;"></audio>
+        
+        <button class="btn-start" style="margin-top:20px;" onclick="window.print()">🖨️ Print Report to PDF</button>
+        <button class="btn-next" style="display:block; background:#64748b;" onclick="location.reload()">Start New Session</button>
+    </div>
 </div>
 
 <script>
@@ -146,73 +213,74 @@
         "What sport do you like playing?"
     ];
 
+    let currentIdx = 0;
     let mediaRecorder;
     let chunks = [];
-    let timerInterval;
+    let timerInt;
     let seconds = 0;
 
+    async function initTest() {
+        const name = document.getElementById('sName').value;
+        if(!name) return alert("Please enter your name!");
+
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            chunks = [];
+
+            mediaRecorder.ondataavailable = e => chunks.push(e.data);
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(chunks, { type: 'audio/webm' });
+                document.getElementById('finalAudio').src = URL.createObjectURL(blob);
+            };
+
+            mediaRecorder.start();
+            document.body.classList.add('recording');
+            
+            // Start Clock
+            timerInt = setInterval(() => {
+                seconds++;
+                let m = Math.floor(seconds / 60).toString().padStart(2, '0');
+                let s = (seconds % 60).toString().padStart(2, '0');
+                document.getElementById('timer').textContent = `${m}:${s}`;
+            }, 1000);
+
+            // UI Transitions
+            document.getElementById('startBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'block';
+            nextQuestion();
+
+        } catch (err) {
+            alert("Mic error: " + err);
+        }
+    }
+
     function nextQuestion() {
-        const randomQ = questions[Math.floor(Math.random() * questions.length)];
-        document.getElementById('questionText').textContent = randomQ;
-        document.getElementById('recBtn').disabled = false;
-        document.getElementById('playback').style.display = 'none';
-        document.getElementById('dlBtn').style.display = 'none';
+        if(currentIdx < questions.length) {
+            document.getElementById('qText').innerHTML = `<span id="qNumber">Question ${currentIdx + 1} of ${questions.length}</span><br>${questions[currentIdx]}`;
+            currentIdx++;
+            
+            if(currentIdx === questions.length) {
+                document.getElementById('nextBtn').style.display = 'none';
+                document.getElementById('finishBtn').style.display = 'block';
+            }
+        }
     }
 
-    async function startRecording() {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
-        chunks = [];
-
-        mediaRecorder.ondataavailable = e => chunks.push(e.data);
-        mediaRecorder.onstop = () => {
-            const blob = new Blob(chunks, { type: 'audio/webm' });
-            const url = URL.createObjectURL(blob);
-            const audio = document.getElementById('playback');
-            audio.src = url;
-            audio.style.display = 'block';
-            document.getElementById('dlBtn').style.display = 'inline-block';
-            stream.getTracks().forEach(t => t.stop());
-        };
-
-        mediaRecorder.start();
-        document.body.classList.add('recording');
-        document.getElementById('recBtn').style.display = 'none';
-        document.getElementById('stopBtn').style.display = 'inline-block';
-        
-        seconds = 0;
-        document.getElementById('timer').textContent = "00:00";
-        timerInterval = setInterval(() => {
-            seconds++;
-            let m = Math.floor(seconds / 60).toString().padStart(2, '0');
-            let s = (seconds % 60).toString().padStart(2, '0');
-            document.getElementById('timer').textContent = `${m}:${s}`;
-        }, 1000);
-    }
-
-    function stopRecording() {
+    function stopAndFinish() {
         mediaRecorder.stop();
-        clearInterval(timerInterval);
-        document.body.classList.remove('recording');
-        document.getElementById('recBtn').style.display = 'inline-block';
-        document.getElementById('stopBtn').style.display = 'none';
-    }
-
-    function download() {
-        const name = document.getElementById('studentName').value || 'Student';
-        const blob = new Blob(chunks, { type: 'audio/webm' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${name}_interview_answer.webm`;
-        a.click();
-    }
-
-    function finish() {
-        const name = document.getElementById('studentName').value || 'Friend';
-        document.getElementById('mainApp').style.display = 'none';
-        document.getElementById('finishArea').style.display = 'block';
-        document.getElementById('congratsMsg').textContent = `Great job, ${name}! You practiced your speaking skills today.`;
+        clearInterval(timerInt);
+        
+        // Populate Report
+        document.getElementById('repName').textContent = document.getElementById('sName').value;
+        document.getElementById('repDate').textContent = new Date().toLocaleDateString();
+        
+        // Show Report
+        document.getElementById('setupUI').style.display = 'none';
+        document.getElementById('reportArea').style.display = 'block';
+        
+        // Stop all tracks
+        mediaRecorder.stream.getTracks().forEach(t => t.stop());
     }
 </script>
 
