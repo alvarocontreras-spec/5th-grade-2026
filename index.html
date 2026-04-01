@@ -142,27 +142,28 @@
         <div class="feedback-section">
             <h3>🎯 My English Progress (Level A2):</h3>
             <ul style="font-size: 0.95rem; padding-left: 20px; color: #334155; line-height: 1.6;">
-                <li><strong>🔗 Bridge Words:</strong> I use words like <b>and, but, because,</b> and <b>then</b> to connect my ideas.</li>
+                <li><strong>🔗 Bridge Words:</strong> I use words like <b>and, but, because,</b> and <b>then</b> to connect my ideas and make my stories longer.</li>
                 <li><strong>🗣️ Full Power Sentences:</strong> I avoid saying just "Yes" or "No". I speak in complete sentences (Who + Action + Extra Info).</li>
-                <li><strong>🏠 My World:</strong> I can describe my home, family, and school routine with lots of details.</li>
-                <li><strong>Friends & Fun:</strong> I can answer questions about my best friends and hobbies with confidence!</li>
+                <li><strong>🏠 My World:</strong> I can describe my home, my family, and my daily school routine with lots of details.</li>
+                <li><strong>Friends & Fun:</strong> I can answer questions about my best friends and my favorite hobbies with confidence!</li>
             </ul>
         </div>
 
         <audio id="finalAudio" controls style="width: 100%; margin: 10px 0;"></audio>
         
         <div class="no-print">
-            <button id="driveBtn" class="btn-drive">📤 Save Recording to Google Drive</button>
+            <button id="driveBtn" class="btn-drive" onclick="uploadToDrive()">📤 Save Recording to Google Drive</button>
             <div id="status" class="status-msg"></div>
-            <button class="btn-start" style="margin-top:10px; background: #64748b;" onclick="window.print()">🖨️ Print Report to PDF</button>
-            <button class="btn-next" style="display:block; background:#e2e8f0; color: #475569;" onclick="location.reload()">Start New Session</button>
+            <hr>
+            <button class="btn-start" style="background: #64748b;" onclick="window.print()">🖨️ Print Report to PDF</button>
+            <button style="background:#e2e8f0; color: #475569;" onclick="location.reload()">Start New Session</button>
         </div>
     </div>
 </div>
 
 <script>
-    // Tu nueva URL de ejecución de Apps Script
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxq-Oaj_OxmOenIuwc9bkQpsr8Uz5EeBcYxzgSpVAHUi80zYXeoPbLeTi6iaiYDa8lNqg/exec";
+    // TU URL ACTUALIZADA
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYJh8YRfdxdqwCo4cnU6hVUsWu4NnwJQtPV5yeVtUn-CCytM7uN8L8Ts78QLBKqqWPvA/exec";
     
     const questions = [
         "What's your name? How old are you? Where do you live?",
@@ -188,7 +189,6 @@
             chunks = [];
             mediaRecorder.ondataavailable = e => chunks.push(e.data);
             mediaRecorder.onstop = () => {
-                // Definimos el Blob como audio/mpeg (MP3)
                 audioBlob = new Blob(chunks, { type: 'audio/mpeg' });
                 document.getElementById('finalAudio').src = URL.createObjectURL(audioBlob);
             };
@@ -227,10 +227,13 @@
         mediaRecorder.stream.getTracks().forEach(t => t.stop());
     }
 
-    // ENVÍO A GOOGLE DRIVE
-    document.getElementById('driveBtn').onclick = async () => {
+    // FUNCIÓN DE SUBIDA MEJORADA
+    async function uploadToDrive() {
         const status = document.getElementById('status');
         const name = document.getElementById('sName').value;
+        
+        if (!audioBlob) return alert("No recording found!");
+
         status.textContent = "⏳ Uploading... please wait.";
         status.style.color = "orange";
 
@@ -238,25 +241,32 @@
         reader.readAsDataURL(audioBlob);
         reader.onloadend = async () => {
             const base64data = reader.result.split(',')[1];
+            const payload = {
+                base64: base64data,
+                filename: `${name.replace(/\s+/g, '_')}_Oxford_A2.mp3`
+            };
+
             try {
-                // Enviamos los datos con formato MP3
-                await fetch(SCRIPT_URL, {
+                // Usamos mode: 'no-cors' para evitar problemas de seguridad del navegador
+                fetch(SCRIPT_URL, {
                     method: "POST",
-                    mode: "no-cors", 
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        base64: base64data,
-                        filename: `${name.replace(/\s+/g, '_')}_A2_Oral_Test.mp3`
-                    })
+                    mode: "no-cors",
+                    headers: { "Content-Type": "text/plain" },
+                    body: JSON.stringify(payload)
                 });
-                status.textContent = "✅ Successfully saved in Google Drive!";
-                status.style.color = "green";
+                
+                // Con no-cors no podemos leer la respuesta, así que damos un tiempo de espera
+                setTimeout(() => {
+                    status.textContent = "✅ File sent! Please check your Drive folder in a moment.";
+                    status.style.color = "green";
+                }, 2000);
+
             } catch (e) {
-                status.textContent = "❌ Error uploading to Drive.";
+                status.textContent = "❌ Error sending to Drive.";
                 status.style.color = "red";
             }
         };
-    };
+    }
 </script>
 
 </body>
