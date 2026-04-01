@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oxford Flyers - A2 Assessment (CSI)</title>
+    <title>Oxford Flyers - A2 Assessment CSI</title>
     <style>
         :root {
             --oxford-blue: #002147;
@@ -142,10 +142,10 @@
         <div class="feedback-section">
             <h3>🎯 My English Progress (Level A2):</h3>
             <ul style="font-size: 0.95rem; padding-left: 20px; color: #334155; line-height: 1.6;">
-                <li><strong>🔗 Bridge Words:</strong> I use words like <b>and, but, because,</b> and <b>then</b> to connect my ideas and make my stories longer.</li>
+                <li><strong>🔗 Bridge Words:</strong> I use words like <b>and, but, because,</b> and <b>then</b> to connect my ideas.</li>
                 <li><strong>🗣️ Full Power Sentences:</strong> I avoid saying just "Yes" or "No". I speak in complete sentences (Who + Action + Extra Info).</li>
-                <li><strong>🏠 My World:</strong> I can describe my home, my family, and my daily school routine with lots of details.</li>
-                <li><strong>Friends & Fun:</strong> I can answer questions about my best friends and my favorite hobbies with confidence!</li>
+                <li><strong>🏠 My World:</strong> I can describe my home, family, and school routine with lots of details.</li>
+                <li><strong>Friends & Fun:</strong> I can answer questions about my best friends and hobbies with confidence!</li>
             </ul>
         </div>
 
@@ -161,8 +161,8 @@
 </div>
 
 <script>
-    // URL de tu Apps Script del Colegio San Ignacio
-    const SCRIPT_URL = "https://script.google.com/a/macros/colegiosanignacio.cl/s/AKfycbzyapSa7VcwTv-YwfZo-j3RSpORHGEgKOstbr9bIRwqkH5v1lQcQ4oyU3aL5aVUbYyYLw/exec";
+    // Tu nueva URL de ejecución de Apps Script
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxq-Oaj_OxmOenIuwc9bkQpsr8Uz5EeBcYxzgSpVAHUi80zYXeoPbLeTi6iaiYDa8lNqg/exec";
     
     const questions = [
         "What's your name? How old are you? Where do you live?",
@@ -188,6 +188,7 @@
             chunks = [];
             mediaRecorder.ondataavailable = e => chunks.push(e.data);
             mediaRecorder.onstop = () => {
+                // Definimos el Blob como audio/mpeg (MP3)
                 audioBlob = new Blob(chunks, { type: 'audio/mpeg' });
                 document.getElementById('finalAudio').src = URL.createObjectURL(audioBlob);
             };
@@ -226,11 +227,11 @@
         mediaRecorder.stream.getTracks().forEach(t => t.stop());
     }
 
-    // ENVÍO A GOOGLE DRIVE DEL COLEGIO
+    // ENVÍO A GOOGLE DRIVE
     document.getElementById('driveBtn').onclick = async () => {
         const status = document.getElementById('status');
         const name = document.getElementById('sName').value;
-        status.textContent = "⏳ Uploading to CSI Drive... please wait.";
+        status.textContent = "⏳ Uploading... please wait.";
         status.style.color = "orange";
 
         const reader = new FileReader();
@@ -238,7 +239,7 @@
         reader.onloadend = async () => {
             const base64data = reader.result.split(',')[1];
             try {
-                // Usamos POST con el formato JSON que espera el script
+                // Enviamos los datos con formato MP3
                 await fetch(SCRIPT_URL, {
                     method: "POST",
                     mode: "no-cors", 
